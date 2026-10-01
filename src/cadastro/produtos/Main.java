@@ -3,6 +3,11 @@ package cadastro.produtos.cadastro.produtos;
 import java.util.Scanner;
 
 public class Main {
+    static Product[] products = new Product[20];
+    static Scanner scanner = new Scanner(System.in);
+    static boolean cadastrado = false;
+    static boolean ordenado = false;
+
     public static void menu() {
         System.out.println("\n=====MENU=====\n");
         System.out.println("1.Cadastrar os 20 produtos.");
@@ -15,190 +20,186 @@ public class Main {
         System.out.println("8.Sair do programa.\n");
     }
 
+    public static boolean verificarCadastro() {
+        if (!cadastrado) {
+            System.out.println("\nCadastre os produtos primeiro!\n");
+            return false;
+        }
+        return true;
+    }
+
+    public static boolean verificarOrdenacao() {
+        if (!ordenado) {
+            System.out.println("\nVerifique a opção 2 para ordenar os registros.\n");
+            return false;
+        }
+        return true;
+    }
+
+    public static void exibirProduto(Product p) {
+        System.out.println("Código: " + p.getCodigo());
+        System.out.println("Nome: " + p.getNome());
+        System.out.println("Preço: " + p.getPreco());
+    }
+
+    public static void cadastrarProduto() {
+        for (int i = 0; i < products.length; i++) {
+            System.out.println("Código: ");
+            String codigoProduto = scanner.nextLine();
+
+            System.out.println("Nome: ");
+            String nomeProduto = scanner.nextLine();
+
+            System.out.println("Preco: ");
+            double precoProduto = scanner.nextDouble();
+            scanner.nextLine();
+
+            products[i] = new Product(codigoProduto, nomeProduto, precoProduto);
+        }
+        cadastrado = true;
+        ordenado = false;
+    }
+
+    public static double calcularPrecoMedio() {
+        double somaPrecos = 0;
+        for (Product p : products) {
+            somaPrecos += p.getPreco();
+        }
+        return somaPrecos / products.length;
+    }
+
+    public static void ordenarProdutos() {
+        if (!verificarCadastro()) return;
+        for (int i = 0; i < products.length - 1; i++) {
+            for (int j = i + 1; j < products.length; j++) {
+                if (products[i].getCodigo().compareTo(products[j].getCodigo()) > 0) {
+                    Product aux = products[i];
+                    products[i] = products[j];
+                    products[j] = aux;
+                }
+            }
+        }
+        System.out.println("\nOrdenação concluída!\n");
+        ordenado = true;
+    }
+
+    public static void pesquisarProduto() {
+        if (!verificarCadastro()) return;
+        if (!verificarOrdenacao()) return;
+
+        System.out.println("Pesquise por um produto (código): ");
+        String codigoPesquisa = scanner.nextLine();
+
+        int inicio = 0;
+        int fim = products.length - 1;
+        while (inicio <= fim) {
+            int meio = (inicio + fim) / 2;
+            int comparacao = codigoPesquisa.compareTo(products[meio].getCodigo());
+
+            if (comparacao == 0) {
+                exibirProduto(products[meio]);
+                return;
+            } else if (comparacao < 0) {
+                fim = meio - 1;
+            } else {
+                inicio = meio + 1;
+            }
+        }
+        System.out.println("\nProduto não encontrado entre os registros.\n");
+    }
+
+    public static void listarAcimaDe100() {
+        if (!verificarCadastro()) return;
+        if (!verificarOrdenacao()) return;
+
+        boolean achou = false;
+        for (Product p : products) {
+            if (p.getPreco() > 100.0) {
+                exibirProduto(p);
+                achou = true;
+            }
+        }
+        if (!achou) {
+            System.out.println("\nSem registros.\n");
+        }
+    }
+
+    public static void listarEntre50E100() {
+        if (!verificarCadastro()) return;
+        if (!verificarOrdenacao()) return;
+        boolean achou = false;
+
+        for (Product p : products) {
+            if (p.getPreco() >= 50.0 && p.getPreco() <= 100.0) {
+                exibirProduto(p);
+                achou = true;
+            }
+        }
+        if (!achou) {
+            System.out.println("\nSem registros.\n");
+        }
+    }
+
+    public static void listarAbaixoDe50() {
+        if (!verificarCadastro()) return;
+        if (!verificarOrdenacao()) return;
+
+        boolean achou = false;
+        for (Product p : products) {
+            if (p.getPreco() < 50.0) {
+                exibirProduto(p);
+                achou = true;
+            }
+        }
+        if (!achou) {
+            System.out.println("\nSem registros.\n");
+        }
+    }
+
+    public static void listarTodos() {
+        if (!verificarCadastro()) return;
+        for (int i = 0; i < products.length; i++) {
+            System.out.println("\nCADASTRO " + (i + 1));
+            exibirProduto(products[i]);
+        }
+        System.out.println("\nMÉDIA DO PREÇO DOS PRODUTOS: " + calcularPrecoMedio());
+    }
+
     public static void main(String[] args) {
-        Product[] products = new Product[20];
-        Scanner scanner = new Scanner(System.in);
-        Product aux;
-
-        int i, j;
         int opcao;
-        String pesquisa;
-        int cadastrado = 0, ordenado = 0;
-        int inicio, meio = 0, fim, encontrou;
-        int achouRegistro;
-        double precoMedio = 0, somaPrecos;
-
         do {
             menu();
             System.out.println("Escolha uma opção: ");
             opcao = scanner.nextInt();
             scanner.nextLine();
+
             switch (opcao) {
-
                 case 1:
-                    somaPrecos = 0;
-                    for (i = 0; i < products.length; i++) {
-                        System.out.println("CADASTRO " + (i + 1));
-
-                        System.out.println("Código: ");
-                        String codigo = scanner.nextLine();
-
-                        System.out.println("Nome: ");
-                        String nome = scanner.nextLine();
-
-                        System.out.println("Preço: ");
-                        double preco = scanner.nextDouble();
-                        scanner.nextLine();
-
-                        products[i] = new Product(codigo, nome, preco);
-                    }
-
-                    for (i = 0; i < products.length; i++) {
-                        somaPrecos += products[i].getPreco();
-                    }
-                    precoMedio = somaPrecos / products.length;
-
-                    cadastrado = 1;
-                    ordenado = 0;
+                    cadastrarProduto();
                     break;
 
                 case 2:
-                    if (cadastrado == 0) {
-                        System.out.println("\nCadastre os produtos primeiro!.\n");
-                        break;
-                    }
-
-                    for (i = 0; i < products.length - 1; i++) {
-                        for (j = i + 1; j < products.length; j++) {
-                            if (products[i].getCodigo().compareTo(products[j].getCodigo()) > 0) {
-                                aux = products[i];
-                                products[i] = products[j];
-                                products[j] = aux;
-                            }
-                        }
-                    }
-                    System.out.println("\nOrdenação concluída.!\n");
-                    ordenado = 1;
+                    ordenarProdutos();
                     break;
 
                 case 3:
-                    if (cadastrado == 0) {
-                        System.out.println("\nCadastre os produtos primeiro!.\n");
-                        break;
-                    }
-                    if (ordenado == 0) {
-                        System.out.println("\nUtilize a opção 2 para ordenar os registros.!\n");
-                        break;
-                    }
-                    System.out.println("Pesquise por um produto (código): ");
-                    pesquisa = scanner.nextLine();
-
-                    encontrou = 0;
-                    inicio = 0;
-                    fim = products.length - 1;
-
-                    while (inicio <= fim) {
-                        meio = (inicio + fim) / 2;
-
-                        if (products[meio].getCodigo().compareTo(pesquisa) == 0) {
-                            encontrou = 1;
-                            break;
-                        } else if (pesquisa.compareTo(products[meio].getCodigo()) < 0) {
-                            fim = meio - 1;
-                        } else {
-                            inicio = meio + 1;
-                        }
-                    }
-                    if (encontrou == 1) {
-                        System.out.println("\nCódigo: " + products[meio].getCodigo());
-                        System.out.println("\nNome: " + products[meio].getNome());
-                        System.out.println("\nPreço: " + products[meio].getPreco());
-                    } else {
-                        System.out.println("\nProduto não encontrado entre os registros.\n");
-                    }
+                    pesquisarProduto();
                     break;
 
                 case 4:
-                    if (cadastrado == 0) {
-                        System.out.println("\nCadastre os produtos primeiro!.\n");
-                        break;
-                    }
-                    if (ordenado == 0) {
-                        System.out.println("\nUtilize a opção 2 para ordenar os registros.\n");
-                        break;
-                    }
-                    achouRegistro = 0;
-                    for (i = 0; i < products.length; i++) {
-                        if (products[i].getPreco() > 100.0) {
-                            System.out.println("Código: " + products[i].getCodigo());
-                            System.out.println("Nome: " + products[i].getNome());
-                            System.out.println("Preço: " + products[i].getPreco());
-                            achouRegistro = 1;
-                        }
-                    }
-                    if (achouRegistro == 0) {
-                        System.out.println("\nSem registros.\n");
-                    }
+                    listarAcimaDe100();
                     break;
 
                 case 5:
-                    if (cadastrado == 0) {
-                        System.out.println("\nCadastre os produtos primeiro!.\n");
-                        break;
-                    }
-                    if (ordenado == 0) {
-                        System.out.println("\nUtilize a opção 2 para ordenar os registros.\n");
-                        break;
-                    }
-                    achouRegistro = 0;
-                    for (i = 0; i < products.length; i++) {
-                        if (products[i].getPreco() >= 50.0 && products[i].getPreco() <= 100.0) {
-                            System.out.println("Código: " + products[i].getCodigo());
-                            System.out.println("Nome: " + products[i].getNome());
-                            System.out.println("Preço: " + products[i].getPreco());
-                            achouRegistro = 1;
-                        }
-                    }
-                    if (achouRegistro == 0) {
-                        System.out.println("\nSem registros.\n");
-                    }
+                    listarEntre50E100();
                     break;
 
                 case 6:
-                    if (cadastrado == 0) {
-                        System.out.println("\nCadastre os produtos primeiro!.\n");
-                        break;
-                    }
-                    if (ordenado == 0) {
-                        System.out.println("\nUtilize a opção 2 para ordenar os registros.\n");
-                        break;
-                    }
-                    achouRegistro = 0;
-                    for (i = 0; i < products.length; i++) {
-                        if (products[i].getPreco() < 50.0) {
-                            System.out.println("Código: " + products[i].getCodigo());
-                            System.out.println("Nome: " + products[i].getNome());
-                            System.out.println("Preço: " + products[i].getPreco());
-                            achouRegistro = 1;
-                        }
-                    }
-                    if (achouRegistro == 0) {
-                        System.out.println("\nSem registros.\n");
-                    }
+                    listarAbaixoDe50();
                     break;
 
                 case 7:
-                    if (cadastrado == 0) {
-                        System.out.println("\nCadastre os produtos primeiro!.\n");
-                        break;
-                    }
-                    for (i = 0; i < products.length; i++) {
-                        System.out.println("\nCADASTRO " + (i + 1));
-                        System.out.println("\nCódigo: " + products[i].getCodigo());
-                        System.out.println("\nNome: " + products[i].getNome());
-                        System.out.println("\nPreço: " + products[i].getPreco());
-                    }
-                    System.out.println("\nMÉDIA DO PREÇO DOS PRODUTOS: " + precoMedio);
+                    listarTodos();
                     break;
 
                 case 8:
