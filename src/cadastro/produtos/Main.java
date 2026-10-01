@@ -3,7 +3,7 @@ package cadastro.produtos.cadastro.produtos;
 import java.util.Scanner;
 
 public class Main {
-    static Product[] products = new Product[20];
+    static Produto[] produtos = new Produto[20];
     static Scanner scanner = new Scanner(System.in);
     static boolean cadastrado = false;
     static boolean ordenado = false;
@@ -36,14 +36,14 @@ public class Main {
         return true;
     }
 
-    public static void exibirProduto(Product p) {
+    public static void exibirProduto(Produto p) {
         System.out.println("Código: " + p.getCodigo());
         System.out.println("Nome: " + p.getNome());
         System.out.println("Preço: " + p.getPreco());
     }
 
     public static void cadastrarProduto() {
-        for (int i = 0; i < products.length; i++) {
+        for (int i = 0; i < produtos.length; i++) {
             System.out.println("Código: ");
             String codigoProduto = scanner.nextLine();
 
@@ -54,7 +54,7 @@ public class Main {
             double precoProduto = scanner.nextDouble();
             scanner.nextLine();
 
-            products[i] = new Product(codigoProduto, nomeProduto, precoProduto);
+            produtos[i] = new Produto(codigoProduto, nomeProduto, precoProduto);
         }
         cadastrado = true;
         ordenado = false;
@@ -62,20 +62,20 @@ public class Main {
 
     public static double calcularPrecoMedio() {
         double somaPrecos = 0;
-        for (Product p : products) {
+        for (Produto p : produtos) {
             somaPrecos += p.getPreco();
         }
-        return somaPrecos / products.length;
+        return somaPrecos / produtos.length;
     }
 
     public static void ordenarProdutos() {
         if (!verificarCadastro()) return;
-        for (int i = 0; i < products.length - 1; i++) {
-            for (int j = i + 1; j < products.length; j++) {
-                if (products[i].getCodigo().compareTo(products[j].getCodigo()) > 0) {
-                    Product aux = products[i];
-                    products[i] = products[j];
-                    products[j] = aux;
+        for (int i = 0; i < produtos.length - 1; i++) {
+            for (int j = i + 1; j < produtos.length; j++) {
+                if (produtos[i].getCodigo().compareTo(produtos[j].getCodigo()) > 0) {
+                    Produto aux = produtos[i];
+                    produtos[i] = produtos[j];
+                    produtos[j] = aux;
                 }
             }
         }
@@ -91,13 +91,13 @@ public class Main {
         String codigoPesquisa = scanner.nextLine();
 
         int inicio = 0;
-        int fim = products.length - 1;
+        int fim = produtos.length - 1;
         while (inicio <= fim) {
             int meio = (inicio + fim) / 2;
-            int comparacao = codigoPesquisa.compareTo(products[meio].getCodigo());
+            int comparacao = codigoPesquisa.compareTo(produtos[meio].getCodigo());
 
             if (comparacao == 0) {
-                exibirProduto(products[meio]);
+                exibirProduto(produtos[meio]);
                 return;
             } else if (comparacao < 0) {
                 fim = meio - 1;
@@ -113,7 +113,7 @@ public class Main {
         if (!verificarOrdenacao()) return;
 
         boolean achou = false;
-        for (Product p : products) {
+        for (Produto p : produtos) {
             if (p.getPreco() > 100.0) {
                 exibirProduto(p);
                 achou = true;
@@ -129,7 +129,7 @@ public class Main {
         if (!verificarOrdenacao()) return;
         boolean achou = false;
 
-        for (Product p : products) {
+        for (Produto p : produtos) {
             if (p.getPreco() >= 50.0 && p.getPreco() <= 100.0) {
                 exibirProduto(p);
                 achou = true;
@@ -145,7 +145,7 @@ public class Main {
         if (!verificarOrdenacao()) return;
 
         boolean achou = false;
-        for (Product p : products) {
+        for (Produto p : produtos) {
             if (p.getPreco() < 50.0) {
                 exibirProduto(p);
                 achou = true;
@@ -158,9 +158,9 @@ public class Main {
 
     public static void listarTodos() {
         if (!verificarCadastro()) return;
-        for (int i = 0; i < products.length; i++) {
+        for (int i = 0; i < produtos.length; i++) {
             System.out.println("\nCADASTRO " + (i + 1));
-            exibirProduto(products[i]);
+            exibirProduto(produtos[i]);
         }
         System.out.println("\nMÉDIA DO PREÇO DOS PRODUTOS: " + calcularPrecoMedio());
     }

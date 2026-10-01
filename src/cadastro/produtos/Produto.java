@@ -1,11 +1,11 @@
 package cadastro.produtos.cadastro.produtos;
 
-public class Product {
+public class Produto {
     private final String codigo;
     private String nome;
     private double preco;
 
-    public Product(String codigo, String nome, double preco) {
+    public Produto(String codigo, String nome, double preco) {
         this.codigo = codigo;
         this.nome = nome;
         this.preco = preco;
